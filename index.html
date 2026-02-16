@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="sv" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Armeniska Duo • Svenska till Armeniska</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <h1 class="brand">duolingo</h1>
+      <nav class="menu" aria-label="Huvudmeny">
+        <button class="menu-item active"><span>LÄR</span></button>
+        <button class="menu-item"><span>SHOP</span></button>
+        <button class="menu-item"><span>PROFIL</span></button>
+      </nav>
+    </aside>
+
+    <main class="main-column">
+      <header class="course-top">
+        <div class="course-pill">Svenska → Armeniska • Textbaserat</div>
+        <div class="top-right">
+          <button id="themeToggle" class="theme-btn" type="button" aria-label="Växla tema">Mörkt läge</button>
+          <div class="top-stats">
+            <div class="stat"><span>Streak</span><strong id="streak">1</strong></div>
+            <div class="stat"><span>XP</span><strong id="xp">0</strong></div>
+            <div class="stat"><span>Gems</span><strong id="gems">0</strong></div>
+          </div>
+        </div>
+      </header>
+
+      <section class="unit-banner">
+        <div>
+          <h2>Unit 1</h2>
+          <p>Bygg enkla meningar och vanliga hälsningar.</p>
+        </div>
+        <button id="resetProgressBtn" class="guidebook" type="button">Återställ</button>
+      </section>
+
+      <section class="path-wrap">
+        <div id="pathNodes" class="path-nodes" aria-label="Lektionsbana"></div>
+      </section>
+    </main>
+
+    <aside class="right-column">
+      <section class="panel">
+        <h3>Daily Quest</h3>
+        <p>Tjäna 90 XP idag</p>
+        <div class="bar"><div id="questFill" class="bar-fill"></div></div>
+        <small id="questText">0 / 90 XP</small>
+      </section>
+
+      <section class="panel">
+        <h3>Kursprogress</h3>
+        <div class="xp-row">
+          <span>Avklarade noder</span>
+          <strong id="progressText">0 / 10</strong>
+        </div>
+        <div class="bar"><div id="progressFill" class="bar-fill blue"></div></div>
+        <small id="masteryText">Mastery: 0%</small>
+      </section>
+
+      <section class="panel lesson-panel">
+        <div class="lesson-header">
+          <h3 id="lessonTitle">Starta en lektion</h3>
+          <span id="lessonTag" class="tag">Välj nod</span>
+        </div>
+        <p id="prompt" class="prompt">Klicka på en upplåst nod i banan för att börja.</p>
+        <p id="hint" class="hint">Du får direkt feedback och kan repetera noder för högre streak.</p>
+        <div id="choices" class="choices"></div>
+        <div class="actions">
+          <button id="skipBtn" class="btn ghost" disabled>Hoppa över</button>
+          <button id="nextBtn" class="btn primary" disabled>Nästa</button>
+        </div>
+        <p id="feedback" class="feedback" aria-live="polite"></p>
+      </section>
+
+      <section class="panel">
+        <h3>Frasbank</h3>
+        <ul id="phraseList" class="phrase-list"></ul>
+      </section>
+    </aside>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
