@@ -24,59 +24,54 @@ const unitWordPairs = [
   { sv: "jag mår bra", hy: "ես լավ եմ" },
 ];
 
-const DAILY_XP_GOAL = 90;
 const XP_PER_CORRECT = 12;
-const XP_COMBO_BONUS = 8;
 const GEMS_PER_CORRECT = 3;
-const STORAGE_KEY = "armenian-duo-progress-v3";
+const STORAGE_KEY = "armenian-duo-progress-v4";
 const THEME_KEY = "armenian-duo-theme";
 
 const el = {
   root: document.documentElement,
+  homePage: document.getElementById("homePage"),
+  unitPage: document.getElementById("unitPage"),
   themeToggle: document.getElementById("themeToggle"),
-  unitWords: document.getElementById("unitWords"),
-  pathNodes: document.getElementById("pathNodes"),
   streak: document.getElementById("streak"),
   xp: document.getElementById("xp"),
   gems: document.getElementById("gems"),
-  questFill: document.getElementById("questFill"),
-  questText: document.getElementById("questText"),
-  progressFill: document.getElementById("progressFill"),
-  progressText: document.getElementById("progressText"),
-  masteryText: document.getElementById("masteryText"),
-  lessonTitle: document.getElementById("lessonTitle"),
-  lessonTag: document.getElementById("lessonTag"),
+  enterUnitBtn: document.getElementById("enterUnitBtn"),
+  quitUnitBtn: document.getElementById("quitUnitBtn"),
+  questionCounter: document.getElementById("questionCounter"),
+  timerText: document.getElementById("timerText"),
   prompt: document.getElementById("prompt"),
   hint: document.getElementById("hint"),
   choices: document.getElementById("choices"),
-  skipBtn: document.getElementById("skipBtn"),
   nextBtn: document.getElementById("nextBtn"),
   feedback: document.getElementById("feedback"),
   phraseList: document.getElementById("phraseList"),
+  unitWords: document.getElementById("unitWords"),
   resetProgressBtn: document.getElementById("resetProgressBtn"),
+  entryOverlay: document.getElementById("entryOverlay"),
+  loadFill: document.getElementById("loadFill"),
 };
 
 const state = {
-  activeLessonIndex: null,
-  answered: false,
-  completed: new Set(),
-  unlockedCount: 1,
-  streak: 1,
   xp: 0,
   gems: 0,
-  combo: 0,
+  streak: 1,
+  unitIndex: 0,
+  answered: false,
+  timerSeconds: 0,
+  timerId: null,
 };
 
 function saveProgress() {
-  const data = {
-    completed: [...state.completed],
-    unlockedCount: state.unlockedCount,
-    streak: state.streak,
-    xp: state.xp,
-    gems: state.gems,
-    combo: state.combo,
-  };
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  localStorage.setItem(
+    STORAGE_KEY,
+    JSON.stringify({
+      xp: state.xp,
+      gems: state.gems,
+      streak: state.streak,
+    }),
+  );
 }
 
 function loadProgress() {
@@ -87,22 +82,19 @@ function loadProgress() {
 
   try {
     const data = JSON.parse(raw);
-    state.completed = new Set(data.completed || []);
-    state.unlockedCount = Math.min(lessons.length, Math.max(1, Number(data.unlockedCount) || 1));
-    state.streak = Math.max(1, Number(data.streak) || 1);
     state.xp = Math.max(0, Number(data.xp) || 0);
     state.gems = Math.max(0, Number(data.gems) || 0);
-    state.combo = Math.max(0, Number(data.combo) || 0);
+    state.streak = Math.max(1, Number(data.streak) || 1);
   } catch {
     localStorage.removeItem(STORAGE_KEY);
   }
 }
 
 function applyTheme(theme) {
-  const nextTheme = theme === "dark" ? "dark" : "light";
-  el.root.setAttribute("data-theme", nextTheme);
-  el.themeToggle.textContent = nextTheme === "dark" ? "Ljust läge" : "Mörkt läge";
-  localStorage.setItem(THEME_KEY, nextTheme);
+  const next = theme === "dark" ? "dark" : "light";
+  el.root.setAttribute("data-theme", next);
+  el.themeToggle.textContent = next === "dark" ? "Ljust läge" : "Mörkt läge";
+  localStorage.setItem(THEME_KEY, next);
 }
 
 function loadTheme() {
@@ -121,21 +113,59 @@ function toggleTheme() {
   applyTheme(current === "light" ? "dark" : "light");
 }
 
+function formatTime(totalSec) {
+  const mins = String(Math.floor(totalSec / 60)).padStart(2, "0");
+  const secs = String(totalSec % 60).padStart(2, "0");
+  return `${mins}:${secs}`;
+}
+
+function startTimer() {
+  stopTimer();
+  state.timerSeconds = 0;
+  el.timerText.textContent = formatTime(state.timerSeconds);
+  state.timerId = setInterval(() => {
+    state.timerSeconds += 1;
+    el.timerText.textContent = formatTime(state.timerSeconds);
+  }, 1000);
+}
+
+function stopTimer() {
+  if (state.timerId) {
+    clearInterval(state.timerId);
+    state.timerId = null;
+  }
+}
+
+function showPage(which) {
+  el.homePage.classList.toggle("active", which === "home");
+  el.unitPage.classList.toggle("active", which === "unit");
+}
+
+function setFeedback(message, kind = "info") {
+  el.feedback.textContent = message;
+  el.feedback.className = `feedback ${kind}`;
+}
+
+function updateTopStats() {
+  el.streak.textContent = String(state.streak);
+  el.xp.textContent = String(state.xp);
+  el.gems.textContent = String(state.gems);
+}
+
 function renderUnitWords() {
   el.unitWords.innerHTML = "";
-
   unitWordPairs.forEach((pair) => {
     const chip = document.createElement("button");
     chip.type = "button";
     chip.className = "word-chip";
     chip.textContent = pair.sv;
-    chip.setAttribute("data-translation", `${pair.hy}`);
+    chip.setAttribute("data-translation", pair.hy);
     chip.setAttribute("aria-label", `${pair.sv} betyder ${pair.hy}`);
     el.unitWords.appendChild(chip);
   });
 }
 
-function fillPhraseList() {
+function renderPhraseList() {
   el.phraseList.innerHTML = "";
   lessons.forEach((lesson) => {
     const li = document.createElement("li");
@@ -144,222 +174,126 @@ function fillPhraseList() {
   });
 }
 
-function setFeedback(message, type = "info") {
-  el.feedback.textContent = message;
-  el.feedback.className = `feedback ${type}`;
-}
-
-function getMastery() {
-  return Math.round((state.completed.size / lessons.length) * 100);
-}
-
-function updateStats() {
-  el.streak.textContent = String(state.streak);
-  el.xp.textContent = String(state.xp);
-  el.gems.textContent = String(state.gems);
-
-  const questPct = Math.min(100, (state.xp / DAILY_XP_GOAL) * 100);
-  el.questFill.style.width = `${questPct}%`;
-  el.questText.textContent = `${state.xp} / ${DAILY_XP_GOAL} XP`;
-
-  const progressPct = (state.completed.size / lessons.length) * 100;
-  el.progressFill.style.width = `${progressPct}%`;
-  el.progressText.textContent = `${state.completed.size} / ${lessons.length}`;
-  el.masteryText.textContent = `Mastery: ${getMastery()}%`;
-}
-
-function buildPath() {
-  el.pathNodes.innerHTML = "";
-
-  lessons.forEach((lesson, index) => {
-    const button = document.createElement("button");
-    button.type = "button";
-
-    const isCompleted = state.completed.has(lesson.id);
-    const isUnlocked = index < state.unlockedCount;
-    const isActive = state.activeLessonIndex === index;
-
-    button.className = "path-node";
-    button.classList.add(index % 2 === 0 ? "left" : "right");
-
-    if (isCompleted) {
-      button.classList.add("completed");
-      button.textContent = "✓";
-    } else if (isUnlocked) {
-      button.classList.add("unlocked");
-      button.textContent = "●";
-    } else {
-      button.classList.add("locked");
-      button.textContent = "•";
-      button.disabled = true;
-    }
-
-    if (isActive) {
-      button.classList.add("active");
-    }
-
-    const label = document.createElement("span");
-    label.className = "path-label";
-    label.textContent = index === 0 ? "START" : `LEKTION ${lesson.id}`;
-    button.appendChild(label);
-
-    if (isUnlocked) {
-      button.addEventListener("click", () => startLesson(index));
-    }
-
-    el.pathNodes.appendChild(button);
-  });
-}
-
-function startLesson(index) {
-  if (index >= state.unlockedCount) {
-    return;
-  }
-
-  state.activeLessonIndex = index;
-  state.answered = false;
-  const lesson = lessons[index];
-
-  el.lessonTitle.textContent = `Lektion ${lesson.id}: ${lesson.sv}`;
-  el.lessonTag.textContent = "Välj rätt armeniska";
+function renderQuestion() {
+  const lesson = lessons[state.unitIndex];
+  el.questionCounter.textContent = `${state.unitIndex + 1} / ${lessons.length}`;
   el.prompt.textContent = `Hur säger man "${lesson.sv}" på armeniska?`;
   el.hint.textContent = `Tips: ${lesson.hint} • Uttal: ${lesson.pronunciation}`;
   el.choices.innerHTML = "";
+  el.nextBtn.disabled = true;
+  state.answered = false;
+  setFeedback("", "info");
 
   lesson.choices.forEach((choice) => {
-    const button = document.createElement("button");
-    button.type = "button";
-    button.className = "choice-btn";
-    button.textContent = choice;
-    button.addEventListener("click", () => chooseAnswer(button, choice));
-    el.choices.appendChild(button);
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "choice-btn";
+    btn.textContent = choice;
+    btn.addEventListener("click", () => answerQuestion(btn, choice, lesson.hy));
+    el.choices.appendChild(btn);
   });
-
-  el.skipBtn.disabled = false;
-  el.nextBtn.disabled = true;
-  setFeedback("", "info");
-  buildPath();
 }
 
-function chooseAnswer(button, selectedChoice) {
-  if (state.activeLessonIndex === null || state.answered) {
+function answerQuestion(button, selected, correct) {
+  if (state.answered) {
     return;
   }
 
   state.answered = true;
-  const lesson = lessons[state.activeLessonIndex];
-  const buttons = [...document.querySelectorAll(".choice-btn")];
-
-  buttons.forEach((btn) => {
+  const all = [...document.querySelectorAll(".choice-btn")];
+  all.forEach((btn) => {
     btn.disabled = true;
-    if (btn.textContent === lesson.hy) {
+    if (btn.textContent === correct) {
       btn.classList.add("correct");
     }
   });
 
-  if (selectedChoice === lesson.hy) {
+  if (selected === correct) {
     state.xp += XP_PER_CORRECT;
     state.gems += GEMS_PER_CORRECT;
     state.streak += 1;
-    state.combo += 1;
-
-    if (!state.completed.has(lesson.id)) {
-      state.completed.add(lesson.id);
-      state.unlockedCount = Math.min(lessons.length, state.unlockedCount + 1);
-    }
-
-    let message = `Rätt! +${XP_PER_CORRECT} XP och +${GEMS_PER_CORRECT} gems.`;
-    if (state.combo % 3 === 0) {
-      state.xp += XP_COMBO_BONUS;
-      message += ` Combo bonus +${XP_COMBO_BONUS} XP.`;
-    }
-    if (state.xp >= DAILY_XP_GOAL) {
-      message += " Daily quest klar.";
-    }
-
-    setFeedback(message, "good");
+    setFeedback(`Rätt! +${XP_PER_CORRECT} XP och +${GEMS_PER_CORRECT} gems.`, "good");
   } else {
     button.classList.add("wrong");
-    state.combo = 0;
     state.streak = Math.max(1, state.streak - 1);
-    setFeedback(`Fel. Rätt svar är "${lesson.hy}".`, "bad");
+    setFeedback(`Fel. Rätt svar: ${correct}`, "bad");
   }
 
   el.nextBtn.disabled = false;
-  updateStats();
-  buildPath();
+  updateTopStats();
   saveProgress();
 }
 
-function clearLessonPanel(message = "Fortsätt med nästa nod i banan.") {
+function finishUnit() {
+  stopTimer();
+  setFeedback(`Unit klar på ${formatTime(state.timerSeconds)}!`, "good");
+  el.prompt.textContent = "Bra jobbat! Du klarade Unit 1.";
+  el.hint.textContent = "Tryck Avsluta Unit för att gå tillbaka till startsidan.";
   el.choices.innerHTML = "";
-  el.skipBtn.disabled = true;
   el.nextBtn.disabled = true;
-  state.activeLessonIndex = null;
-  setFeedback(message, "good");
 }
 
-function goNext() {
-  if (state.activeLessonIndex === null) {
+function nextQuestion() {
+  if (!state.answered) {
     return;
   }
 
-  const nextIndex = state.activeLessonIndex + 1;
-  if (nextIndex < state.unlockedCount && nextIndex < lessons.length) {
-    startLesson(nextIndex);
+  if (state.unitIndex >= lessons.length - 1) {
+    finishUnit();
     return;
   }
 
-  el.lessonTitle.textContent = "Unit 1 klar";
-  el.lessonTag.textContent = "Bra jobbat";
-  el.prompt.textContent = "Du har slutfört alla upplåsta noder i enheten.";
-  el.hint.textContent = "Repetera noder för bättre streak och högre mastery.";
-  clearLessonPanel("Snyggt jobbat! Träna valfri upplåst nod för mer XP.");
-  buildPath();
+  state.unitIndex += 1;
+  renderQuestion();
 }
 
-function skipCurrent() {
-  if (state.activeLessonIndex === null || state.answered) {
-    return;
-  }
+async function animateEntryAndEnterUnit() {
+  el.entryOverlay.hidden = false;
+  el.loadFill.style.width = "0%";
 
-  state.combo = 0;
-  state.streak = Math.max(1, state.streak - 1);
-  setFeedback("Frågan hoppades över. Ingen XP för denna nod.", "info");
-  goNext();
-  updateStats();
-  saveProgress();
+  await new Promise((resolve) => {
+    requestAnimationFrame(() => {
+      el.loadFill.style.transition = "width 520ms ease";
+      el.loadFill.style.width = "100%";
+      setTimeout(resolve, 540);
+    });
+  });
+
+  el.entryOverlay.hidden = true;
+  el.loadFill.style.transition = "none";
+}
+
+async function enterUnit() {
+  await animateEntryAndEnterUnit();
+  state.unitIndex = 0;
+  showPage("unit");
+  startTimer();
+  renderQuestion();
+}
+
+function quitUnit() {
+  stopTimer();
+  showPage("home");
+  setFeedback("", "info");
 }
 
 function resetProgress() {
-  state.activeLessonIndex = null;
-  state.answered = false;
-  state.completed = new Set();
-  state.unlockedCount = 1;
-  state.streak = 1;
   state.xp = 0;
   state.gems = 0;
-  state.combo = 0;
-
-  localStorage.removeItem(STORAGE_KEY);
-
-  el.lessonTitle.textContent = "Starta en lektion";
-  el.lessonTag.textContent = "Välj nod";
-  el.prompt.textContent = "Klicka på en upplåst nod i banan för att börja.";
-  el.hint.textContent = "Du får direkt feedback och kan repetera noder för högre streak.";
-  clearLessonPanel("Progress återställd.");
-  updateStats();
-  buildPath();
+  state.streak = 1;
+  saveProgress();
+  updateTopStats();
 }
 
-el.nextBtn.addEventListener("click", goNext);
-el.skipBtn.addEventListener("click", skipCurrent);
-el.resetProgressBtn.addEventListener("click", resetProgress);
 el.themeToggle.addEventListener("click", toggleTheme);
+el.enterUnitBtn.addEventListener("click", enterUnit);
+el.quitUnitBtn.addEventListener("click", quitUnit);
+el.nextBtn.addEventListener("click", nextQuestion);
+el.resetProgressBtn.addEventListener("click", resetProgress);
 
 loadTheme();
 loadProgress();
+updateTopStats();
 renderUnitWords();
-fillPhraseList();
-updateStats();
-buildPath();
+renderPhraseList();
+showPage("home");

@@ -7,86 +7,55 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <div class="layout">
-    <aside class="sidebar">
-      <h1 class="brand">duolingo</h1>
-      <nav class="menu" aria-label="Huvudmeny">
-        <button class="menu-item active"><span>LÄR</span></button>
-        <button class="menu-item"><span>SHOP</span></button>
-        <button class="menu-item"><span>PROFIL</span></button>
-      </nav>
-    </aside>
+  <main class="app-shell">
+    <section id="homePage" class="page active" aria-label="Hem">
+      <header class="topbar">
+        <h1>Armeniska Duo</h1>
+        <button id="themeToggle" class="ghost-btn" type="button">Mörkt läge</button>
+      </header>
 
-    <main class="main-column">
-      <header class="course-top glass">
-        <div class="course-pill">Svenska → Armeniska • Textbaserat</div>
-        <div class="top-right">
-          <button id="themeToggle" class="theme-btn" type="button" aria-label="Växla tema">Mörkt läge</button>
-          <div class="top-stats">
-            <div class="stat"><span>Streak</span><strong id="streak">1</strong></div>
-            <div class="stat"><span>XP</span><strong id="xp">0</strong></div>
-            <div class="stat"><span>Gems</span><strong id="gems">0</strong></div>
-          </div>
+      <article class="card course-card">
+        <p class="eyebrow">Svenska → Armeniska</p>
+        <h2>Unit 1</h2>
+        <p>Hälsningar och vardagliga fraser.</p>
+        <div class="meta-row">
+          <span>Streak: <strong id="streak">1</strong></span>
+          <span>XP: <strong id="xp">0</strong></span>
+          <span>Gems: <strong id="gems">0</strong></span>
+        </div>
+        <button id="enterUnitBtn" class="primary-btn" type="button">Starta Unit 1</button>
+      </article>
+
+      <article class="card">
+        <h3>Snabbord (hovra eller tryck)</h3>
+        <div id="unitWords" class="unit-words"></div>
+      </article>
+    </section>
+
+    <section id="unitPage" class="page" aria-label="Unit 1">
+      <header class="topbar unit-topbar">
+        <button id="quitUnitBtn" class="ghost-btn" type="button">Avsluta Unit</button>
+        <div class="unit-status">
+          <span id="questionCounter">1 / 10</span>
+          <span id="timerText">00:00</span>
         </div>
       </header>
 
-      <section class="unit-banner card-elevated">
-        <div>
-          <h2>Unit 1</h2>
-          <p>Bygg enkla meningar och vanliga hälsningar.</p>
-        </div>
-        <button id="resetProgressBtn" class="guidebook" type="button">Återställ</button>
-      </section>
-
-      <section class="unit-vocab card-elevated" aria-label="Ordförråd i enheten">
-        <h3>Hover-ord i enheten</h3>
-        <p>Hovra över ett svenskt ord för att se armenisk översättning.</p>
-        <div id="unitWords" class="unit-words"></div>
-      </section>
-
-      <section class="path-wrap">
-        <div id="pathNodes" class="path-nodes" aria-label="Lektionsbana"></div>
-      </section>
-    </main>
-
-    <aside class="right-column">
-      <section class="panel card-elevated">
-        <h3>Daily Quest</h3>
-        <p>Tjäna 90 XP idag</p>
-        <div class="bar"><div id="questFill" class="bar-fill"></div></div>
-        <small id="questText">0 / 90 XP</small>
-      </section>
-
-      <section class="panel card-elevated">
-        <h3>Kursprogress</h3>
-        <div class="xp-row">
-          <span>Avklarade noder</span>
-          <strong id="progressText">0 / 10</strong>
-        </div>
-        <div class="bar"><div id="progressFill" class="bar-fill blue"></div></div>
-        <small id="masteryText">Mastery: 0%</small>
-      </section>
-
-      <section class="panel lesson-panel card-elevated">
-        <div class="lesson-header">
-          <h3 id="lessonTitle">Starta en lektion</h3>
-          <span id="lessonTag" class="tag">Välj nod</span>
-        </div>
-        <p id="prompt" class="prompt">Klicka på en upplåst nod i banan för att börja.</p>
-        <p id="hint" class="hint">Du får direkt feedback och kan repetera noder för högre streak.</p>
+      <article class="card question-card">
+        <p id="prompt" class="prompt">Fråga laddas…</p>
+        <p id="hint" class="hint"></p>
         <div id="choices" class="choices"></div>
-        <div class="actions">
-          <button id="skipBtn" class="btn ghost" disabled>Hoppa över</button>
-          <button id="nextBtn" class="btn primary" disabled>Nästa</button>
-        </div>
+        <button id="nextBtn" class="primary-btn" type="button" disabled>Nästa</button>
         <p id="feedback" class="feedback" aria-live="polite"></p>
-      </section>
+      </article>
+    </section>
+  </main>
 
-      <section class="panel card-elevated">
-        <h3>Frasbank</h3>
-        <ul id="phraseList" class="phrase-list"></ul>
-      </section>
-    </aside>
+  <div id="entryOverlay" class="overlay" hidden>
+    <div class="overlay-card">
+      <p>Öppnar Unit 1…</p>
+      <div class="load-track"><div id="loadFill" class="load-fill"></div></div>
+    </div>
   </div>
 
   <script src="app.js"></script>
