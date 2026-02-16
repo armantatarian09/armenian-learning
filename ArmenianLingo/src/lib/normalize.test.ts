@@ -3,7 +3,7 @@ import { isAnswerCorrect, normalizeAnswer } from "./normalize";
 
 describe("normalizeAnswer", () => {
   it("normalizes casing and spaces", () => {
-    expect(normalizeAnswer("  Barev   ")) .toBe("barev");
+    expect(normalizeAnswer("  Barev   ")).toBe("barev");
   });
 
   it("removes diacritics", () => {
@@ -14,7 +14,7 @@ describe("normalizeAnswer", () => {
 describe("isAnswerCorrect", () => {
   it("matches normalized values", () => {
     expect(isAnswerCorrect("HELLO", ["hello"])).toBe(true);
-    expect(isAnswerCorrect("  shnorhakalutyun ", ["Shnorhakalutyun"])) .toBe(true);
+    expect(isAnswerCorrect("  shnorhakalutyun ", ["Shnorhakalutyun"])).toBe(true);
   });
 
   it("rejects wrong answer", () => {

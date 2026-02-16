@@ -2,6 +2,7 @@
 
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
+import { createSrsItem, isDueNow, updateSrsItem, type ResponseSpeed, type SrsItem } from "@/lib/srs";
 
 type SettingsState = {
   transliteration: boolean;
@@ -27,6 +28,7 @@ type AppState = {
   settings: SettingsState;
   stats: StatsState;
   progress: LessonProgress;
+  srs: Record<string, SrsItem>;
   updateSettings: (patch: Partial<SettingsState>) => void;
   startSession: () => void;
   useHeart: () => void;
@@ -34,6 +36,9 @@ type AppState = {
   resetHearts: () => void;
   markLessonDone: (lessonId: string, words: string[]) => void;
   addMistake: (itemId: string) => void;
+  seedSrsItems: (itemIds: string[]) => void;
+  reviewSrsItem: (itemId: string, payload: { correct: boolean; speed: ResponseSpeed }) => void;
+  clearMistake: (itemId: string) => void;
 };
 
 function dateKey() {
@@ -66,6 +71,7 @@ export const useAppStore = create<AppState>()(
         wordsLearned: [],
         mistakes: []
       },
+      srs: {},
       updateSettings: (patch) => set((state) => ({ settings: { ...state.settings, ...patch } })),
       startSession: () => {
         const today = dateKey();
@@ -101,6 +107,29 @@ export const useAppStore = create<AppState>()(
             ...state.progress,
             mistakes: [itemId, ...state.progress.mistakes.filter((id) => id !== itemId)].slice(0, 50)
           }
+        })),
+      seedSrsItems: (itemIds) =>
+        set((state) => {
+          const next = { ...state.srs };
+          itemIds.forEach((itemId) => {
+            if (!next[itemId]) next[itemId] = createSrsItem(itemId);
+          });
+          return { srs: next };
+        }),
+      reviewSrsItem: (itemId, payload) =>
+        set((state) => {
+          const existing = state.srs[itemId] ?? createSrsItem(itemId);
+          const updated = updateSrsItem(existing, payload);
+          return {
+            srs: { ...state.srs, [itemId]: updated }
+          };
+        }),
+      clearMistake: (itemId) =>
+        set((state) => ({
+          progress: {
+            ...state.progress,
+            mistakes: state.progress.mistakes.filter((id) => id !== itemId)
+          }
         }))
     }),
     {
@@ -109,3 +138,14 @@ export const useAppStore = create<AppState>()(
     }
   )
 );
+
+export function getDueNowCount(srs: Record<string, SrsItem>) {
+  return Object.values(srs).filter((item) => isDueNow(item)).length;
+}
+
+export function getWeakItems(srs: Record<string, SrsItem>) {
+  return Object.values(srs)
+    .filter((item) => item.totalReviews > 0)
+    .sort((a, b) => a.accuracy - b.accuracy || b.lapses - a.lapses)
+    .slice(0, 10);
+}

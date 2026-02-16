@@ -1,4 +1,4 @@
-# ArmenianLingo (Phase 1)
+# ArmenianLingo (Phase 2)
 
 Duolingo-style Armenian learner built with Next.js + TypeScript.
 
@@ -24,3 +24,9 @@ npm run test:smoke
 - Curriculum map: `src/content/curriculum.ts`
 - Seed lesson data (Unit 1 Lesson 1): `src/content/unit1/lesson1.json`
 - Schema: `src/lib/schema.ts`
+
+## SRS / Review
+
+- SM-2-like scheduler logic: `src/lib/srs.ts`
+- SRS tests: `src/lib/srs.test.ts`
+- Review queue UI: `src/components/review-overview.tsx`
