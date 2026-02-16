@@ -27,7 +27,8 @@
       </article>
 
       <article class="card">
-        <h3>Snabbord (hovra eller tryck)</h3>
+        <h3>Tryckbara ord</h3>
+        <p class="muted">Alla ord har prickad underline och kan tryckas för översättning.</p>
         <div id="unitWords" class="unit-words"></div>
       </article>
     </section>
@@ -42,9 +43,17 @@
       </header>
 
       <article class="card question-card">
-        <p id="prompt" class="prompt">Fråga laddas…</p>
+        <p class="translate-label">Översätt</p>
+
+        <div class="speech-row">
+          <div class="avatar" aria-hidden="true">🧑</div>
+          <div class="speech-bubble">
+            <button id="armenianWordBtn" class="armenian-word" type="button">Բարև</button>
+            <p id="wordMeaning" class="word-meaning" hidden>hej</p>
+          </div>
+        </div>
+
         <p id="hint" class="hint"></p>
-        <div id="choices" class="choices"></div>
         <button id="nextBtn" class="primary-btn" type="button" disabled>Nästa</button>
         <p id="feedback" class="feedback" aria-live="polite"></p>
       </article>

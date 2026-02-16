@@ -1,32 +1,35 @@
 :root {
-  --bg: #f3f6fb;
+  --bg: #f4f7fb;
   --surface: #ffffff;
-  --line: #d9e2ef;
-  --text: #203046;
-  --muted: #62758f;
+  --line: #d8e0eb;
+  --text: #202734;
+  --muted: #66778e;
   --accent: #58cc02;
   --accent-2: #46a600;
-  --danger: #d64c4c;
+  --pink-new: #ff3fa6;
+  --common: #121212;
 }
 
 :root[data-theme="dark"] {
   --bg: #0f141c;
-  --surface: #1a2431;
-  --line: #2b3a4e;
+  --surface: #1b2431;
+  --line: #2a3648;
   --text: #edf3fb;
   --muted: #9db0c8;
   --accent: #79dc3c;
   --accent-2: #64c52a;
-  --danger: #ff8888;
+  --common: #edf3fb;
 }
 
 * { box-sizing: border-box; }
+
 body {
   margin: 0;
   font-family: Inter, "Segoe UI", sans-serif;
   background: var(--bg);
   color: var(--text);
 }
+
 button { font: inherit; }
 
 .app-shell {
@@ -54,30 +57,31 @@ button { font: inherit; }
 .card {
   background: var(--surface);
   border: 1px solid var(--line);
-  border-radius: 14px;
-  padding: 0.9rem;
+  border-radius: 16px;
+  padding: 0.95rem;
   margin-bottom: 0.75rem;
+}
+
+.eyebrow {
+  margin: 0 0 0.35rem;
+  color: var(--muted);
+  font-size: 0.84rem;
 }
 
 .course-card h2,
 .course-card p,
-.course-card .eyebrow,
 .card h3,
 .card p {
   margin: 0;
 }
 
-.eyebrow {
+.course-card p,
+.muted {
   color: var(--muted);
-  font-size: 0.84rem;
-  margin-bottom: 0.35rem;
 }
 
-.course-card h2 { margin-bottom: 0.2rem; }
-.course-card p { color: var(--muted); }
-
 .meta-row {
-  margin: 0.65rem 0;
+  margin: 0.7rem 0;
   display: flex;
   gap: 0.5rem;
   flex-wrap: wrap;
@@ -87,8 +91,8 @@ button { font: inherit; }
 
 .primary-btn,
 .ghost-btn {
-  border-radius: 10px;
-  padding: 0.62rem 0.78rem;
+  border-radius: 11px;
+  padding: 0.62rem 0.8rem;
   border: 1px solid var(--line);
 }
 
@@ -105,37 +109,46 @@ button { font: inherit; }
 }
 
 .unit-words {
-  margin-top: 0.5rem;
+  margin-top: 0.6rem;
   display: flex;
   flex-wrap: wrap;
   gap: 0.45rem;
 }
 
 .word-chip {
-  position: relative;
-  border: 1px solid var(--line);
-  background: var(--surface);
-  color: var(--text);
-  border-radius: 999px;
-  padding: 0.32rem 0.62rem;
-  font-size: 0.82rem;
+  border: none;
+  border-bottom: 2px dotted currentColor;
+  background: transparent;
+  color: var(--common);
+  padding: 0.14rem 0;
+  line-height: 1.2;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.word-chip.new-word {
+  color: var(--pink-new);
 }
 
 .word-chip::after {
   content: attr(data-translation);
   position: absolute;
   left: 50%;
-  bottom: calc(100% + 6px);
+  bottom: calc(100% + 8px);
   transform: translateX(-50%);
   background: var(--text);
   color: var(--surface);
-  border-radius: 7px;
-  padding: 0.22rem 0.4rem;
+  border-radius: 8px;
+  padding: 0.25rem 0.45rem;
   white-space: nowrap;
   opacity: 0;
-  transition: opacity 120ms ease;
   pointer-events: none;
+  transition: opacity 120ms ease;
   font-size: 0.72rem;
+}
+
+.word-chip {
+  position: relative;
 }
 
 .word-chip:hover::after,
@@ -147,7 +160,7 @@ button { font: inherit; }
   position: sticky;
   top: 0;
   background: var(--bg);
-  padding-bottom: 0.55rem;
+  padding-bottom: 0.6rem;
   z-index: 2;
 }
 
@@ -155,62 +168,95 @@ button { font: inherit; }
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  font-size: 0.88rem;
   color: var(--muted);
+  font-size: 0.88rem;
 }
 
 .question-card {
-  min-height: 58dvh;
+  min-height: 56dvh;
 }
 
-.prompt {
+.translate-label {
   margin: 0;
-  font-size: 1.08rem;
+  font-size: 0.95rem;
+  letter-spacing: 0.02em;
+  color: var(--muted);
+  text-transform: uppercase;
   font-weight: 700;
 }
 
-.hint {
-  margin: 0.32rem 0 0;
-  color: var(--muted);
-}
-
-.choices {
+.speech-row {
+  margin-top: 0.65rem;
   display: grid;
-  gap: 0.5rem;
-  margin: 0.75rem 0;
+  grid-template-columns: 58px 1fr;
+  gap: 0.65rem;
+  align-items: start;
 }
 
-.choice-btn {
+.avatar {
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
   border: 1px solid var(--line);
+  background: color-mix(in oklab, var(--accent) 16%, var(--surface));
+  display: grid;
+  place-items: center;
+  font-size: 1.7rem;
+}
+
+.speech-bubble {
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 0.68rem;
   background: var(--surface);
-  color: var(--text);
+}
+
+.armenian-word {
+  border: none;
+  border-bottom: 2px dotted currentColor;
+  background: transparent;
+  padding: 0;
+  font-size: 1.35rem;
+  font-weight: 800;
+  cursor: pointer;
+  color: var(--common);
+}
+
+.armenian-word.new-word {
+  color: var(--pink-new);
+}
+
+.word-meaning {
+  margin: 0.5rem 0 0;
+  display: inline-block;
+  background: color-mix(in oklab, var(--accent) 14%, var(--surface));
+  border: 1px solid var(--line);
   border-radius: 10px;
-  text-align: left;
-  padding: 0.66rem;
+  padding: 0.35rem 0.5rem;
+  color: var(--text);
+  font-weight: 600;
 }
 
-.choice-btn.correct {
-  border-color: var(--accent);
-  background: color-mix(in oklab, var(--accent) 16%, transparent);
-}
-
-.choice-btn.wrong {
-  border-color: var(--danger);
-  background: color-mix(in oklab, var(--danger) 16%, transparent);
+.hint {
+  margin: 0.7rem 0 0.75rem;
+  color: var(--muted);
+  font-size: 0.9rem;
 }
 
 .feedback {
   min-height: 1.2rem;
-  margin: 0.6rem 0 0;
+  margin: 0.55rem 0 0;
   font-weight: 700;
 }
 
 .feedback.good { color: var(--accent-2); }
-.feedback.bad { color: var(--danger); }
+.feedback.bad { color: #d85757; }
 .feedback.info { color: var(--muted); }
 
-button:disabled { opacity: 0.55; cursor: not-allowed; }
-
+button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
 
 .overlay[hidden] {
   display: none;
@@ -219,27 +265,29 @@ button:disabled { opacity: 0.55; cursor: not-allowed; }
 .overlay {
   position: fixed;
   inset: 0;
-  background: rgba(17, 23, 33, 0.45);
+  background: rgba(15, 20, 29, 0.45);
   display: grid;
   place-items: center;
   z-index: 30;
 }
 
 .overlay-card {
-  width: min(90vw, 330px);
+  width: min(90vw, 320px);
   background: var(--surface);
   border: 1px solid var(--line);
-  border-radius: 12px;
+  border-radius: 13px;
   padding: 0.95rem;
 }
 
-.overlay-card p { margin: 0 0 0.5rem; }
+.overlay-card p {
+  margin: 0 0 0.45rem;
+}
 
 .load-track {
   height: 10px;
-  background: color-mix(in oklab, var(--line) 75%, transparent);
   border-radius: 999px;
   overflow: hidden;
+  background: color-mix(in oklab, var(--line) 72%, transparent);
 }
 
 .load-fill {
@@ -250,10 +298,6 @@ button:disabled { opacity: 0.55; cursor: not-allowed; }
 
 @media (min-width: 900px) {
   .app-shell {
-    width: min(100%, 760px);
-  }
-
-  .question-card {
-    min-height: 48dvh;
+    width: min(100%, 680px);
   }
 }

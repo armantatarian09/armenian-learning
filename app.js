@@ -1,32 +1,21 @@
-const lessons = [
-  { id: 1, sv: "Hej", hy: "Բարև", pronunciation: "Barev", hint: "Vanlig hälsning.", choices: ["Բարև", "Շնորհակալություն", "Ոչ", "Այո"] },
-  { id: 2, sv: "Tack", hy: "Շնորհակալություն", pronunciation: "Shnorhakalutjun", hint: "Används för att tacka.", choices: ["Խնդրում եմ", "Շնորհակալություն", "Բարի լույս", "Բարև"] },
-  { id: 3, sv: "Snälla / Varsågod", hy: "Խնդրում եմ", pronunciation: "Chntrum em", hint: "Två ord.", choices: ["Խնդրում եմ", "Այո", "Ոչ", "Ներեցեք"] },
-  { id: 4, sv: "Ja", hy: "Այո", pronunciation: "Ajo", hint: "Kort bekräftelse.", choices: ["Այո", "Ոչ", "Բարև", "Բարի գիշեր"] },
-  { id: 5, sv: "Nej", hy: "Ոչ", pronunciation: "Votj", hint: "Kort avslag.", choices: ["Շնորհակալություն", "Ոչ", "Այո", "Բարև"] },
-  { id: 6, sv: "God morgon", hy: "Բարի լույս", pronunciation: "Bari lujs", hint: "Börjar med Բարի.", choices: ["Բարի գիշեր", "Բարի լույս", "Բարև", "Ներեցեք"] },
-  { id: 7, sv: "God natt", hy: "Բարի գիշեր", pronunciation: "Bari gisher", hint: "Liknar god morgon men annat andra ord.", choices: ["Բարի լույս", "Բարի գիշեր", "Խնդրում եմ", "Ոչ"] },
-  { id: 8, sv: "Ursäkta", hy: "Ներեցեք", pronunciation: "Neretsek", hint: "Artigt sätt att få uppmärksamhet.", choices: ["Ներեցեք", "Շնորհակալություն", "Բարև", "Այո"] },
-  { id: 9, sv: "Hur mår du?", hy: "Ինչպե՞ս ես", pronunciation: "Intjspes es", hint: "Fråga om hur någon mår.", choices: ["Ես լավ եմ", "Ինչպե՞ս ես", "Բարի լույս", "Ոչ"] },
-  { id: 10, sv: "Jag mår bra", hy: "Ես լավ եմ", pronunciation: "Es lav em", hint: "Svar på hur-frågan.", choices: ["Ես լավ եմ", "Ներեցեք", "Բարև", "Շնորհակալություն"] },
+const lessonCards = [
+  { id: 1, hy: "Բարև", sv: "Hej", pronunciation: "Barev", isNew: true },
+  { id: 2, hy: "Շնորհակալություն", sv: "Tack", pronunciation: "Shnorhakalutjun", isNew: true },
+  { id: 3, hy: "Խնդրում եմ", sv: "Snälla / Varsågod", pronunciation: "Chntrum em", isNew: true },
+  { id: 4, hy: "Այո", sv: "Ja", pronunciation: "Ajo", isNew: false },
+  { id: 5, hy: "Ոչ", sv: "Nej", pronunciation: "Votj", isNew: false },
+  { id: 6, hy: "Բարի լույս", sv: "God morgon", pronunciation: "Bari lujs", isNew: true },
+  { id: 7, hy: "Բարի գիշեր", sv: "God natt", pronunciation: "Bari gisher", isNew: true },
+  { id: 8, hy: "Ներեցեք", sv: "Ursäkta", pronunciation: "Neretsek", isNew: true },
+  { id: 9, hy: "Ինչպե՞ս ես", sv: "Hur mår du?", pronunciation: "Intjspes es", isNew: true },
+  { id: 10, hy: "Ես լավ եմ", sv: "Jag mår bra", pronunciation: "Es lav em", isNew: false },
 ];
 
-const unitWordPairs = [
-  { sv: "hej", hy: "բարև" },
-  { sv: "tack", hy: "շնորհակալություն" },
-  { sv: "ja", hy: "այո" },
-  { sv: "nej", hy: "ոչ" },
-  { sv: "snälla", hy: "խնդրում եմ" },
-  { sv: "ursäkta", hy: "ներեցեք" },
-  { sv: "god morgon", hy: "բարի լույս" },
-  { sv: "god natt", hy: "բարի գիշեր" },
-  { sv: "hur mår du", hy: "ինչպե՞ս ես" },
-  { sv: "jag mår bra", hy: "ես լավ եմ" },
-];
+const quickWords = lessonCards.map((card) => ({ sv: card.sv.toLowerCase(), hy: card.hy, isNew: card.isNew }));
 
-const XP_PER_CORRECT = 12;
-const GEMS_PER_CORRECT = 3;
-const STORAGE_KEY = "armenian-duo-progress-v4";
+const XP_PER_REVEAL = 12;
+const GEMS_PER_REVEAL = 3;
+const STORAGE_KEY = "armenian-duo-progress-v5";
 const THEME_KEY = "armenian-duo-theme";
 
 const el = {
@@ -41,12 +30,11 @@ const el = {
   quitUnitBtn: document.getElementById("quitUnitBtn"),
   questionCounter: document.getElementById("questionCounter"),
   timerText: document.getElementById("timerText"),
-  prompt: document.getElementById("prompt"),
+  armenianWordBtn: document.getElementById("armenianWordBtn"),
+  wordMeaning: document.getElementById("wordMeaning"),
   hint: document.getElementById("hint"),
-  choices: document.getElementById("choices"),
   nextBtn: document.getElementById("nextBtn"),
   feedback: document.getElementById("feedback"),
-  phraseList: document.getElementById("phraseList"),
   unitWords: document.getElementById("unitWords"),
   resetProgressBtn: document.getElementById("resetProgressBtn"),
   entryOverlay: document.getElementById("entryOverlay"),
@@ -58,7 +46,7 @@ const state = {
   gems: 0,
   streak: 1,
   unitIndex: 0,
-  answered: false,
+  revealed: false,
   timerSeconds: 0,
   timerId: null,
 };
@@ -152,12 +140,13 @@ function updateTopStats() {
   el.gems.textContent = String(state.gems);
 }
 
-function renderUnitWords() {
+function renderQuickWords() {
   el.unitWords.innerHTML = "";
-  unitWordPairs.forEach((pair) => {
+
+  quickWords.forEach((pair) => {
     const chip = document.createElement("button");
     chip.type = "button";
-    chip.className = "word-chip";
+    chip.className = `word-chip ${pair.isNew ? "new-word" : "common-word"}`;
     chip.textContent = pair.sv;
     chip.setAttribute("data-translation", pair.hy);
     chip.setAttribute("aria-label", `${pair.sv} betyder ${pair.hy}`);
@@ -165,86 +154,59 @@ function renderUnitWords() {
   });
 }
 
-function renderPhraseList() {
-  el.phraseList.innerHTML = "";
-  lessons.forEach((lesson) => {
-    const li = document.createElement("li");
-    li.textContent = `${lesson.sv} → ${lesson.hy} (${lesson.pronunciation})`;
-    el.phraseList.appendChild(li);
-  });
-}
+function renderCard() {
+  const card = lessonCards[state.unitIndex];
 
-function renderQuestion() {
-  const lesson = lessons[state.unitIndex];
-  el.questionCounter.textContent = `${state.unitIndex + 1} / ${lessons.length}`;
-  el.prompt.textContent = `Hur säger man "${lesson.sv}" på armeniska?`;
-  el.hint.textContent = `Tips: ${lesson.hint} • Uttal: ${lesson.pronunciation}`;
-  el.choices.innerHTML = "";
+  el.questionCounter.textContent = `${state.unitIndex + 1} / ${lessonCards.length}`;
+  el.armenianWordBtn.textContent = card.hy;
+  el.armenianWordBtn.classList.toggle("new-word", card.isNew);
+  el.wordMeaning.textContent = `${card.sv}`;
+  el.wordMeaning.hidden = true;
+  el.hint.textContent = `Uttal: ${card.pronunciation}`;
   el.nextBtn.disabled = true;
-  state.answered = false;
-  setFeedback("", "info");
+  state.revealed = false;
 
-  lesson.choices.forEach((choice) => {
-    const btn = document.createElement("button");
-    btn.type = "button";
-    btn.className = "choice-btn";
-    btn.textContent = choice;
-    btn.addEventListener("click", () => answerQuestion(btn, choice, lesson.hy));
-    el.choices.appendChild(btn);
-  });
+  setFeedback("Tryck på ordet för att se svensk översättning.", "info");
 }
 
-function answerQuestion(button, selected, correct) {
-  if (state.answered) {
+function revealMeaning() {
+  if (state.revealed) {
     return;
   }
 
-  state.answered = true;
-  const all = [...document.querySelectorAll(".choice-btn")];
-  all.forEach((btn) => {
-    btn.disabled = true;
-    if (btn.textContent === correct) {
-      btn.classList.add("correct");
-    }
-  });
+  state.revealed = true;
+  el.wordMeaning.hidden = false;
 
-  if (selected === correct) {
-    state.xp += XP_PER_CORRECT;
-    state.gems += GEMS_PER_CORRECT;
-    state.streak += 1;
-    setFeedback(`Rätt! +${XP_PER_CORRECT} XP och +${GEMS_PER_CORRECT} gems.`, "good");
-  } else {
-    button.classList.add("wrong");
-    state.streak = Math.max(1, state.streak - 1);
-    setFeedback(`Fel. Rätt svar: ${correct}`, "bad");
-  }
-
-  el.nextBtn.disabled = false;
+  state.xp += XP_PER_REVEAL;
+  state.gems += GEMS_PER_REVEAL;
+  state.streak += 1;
   updateTopStats();
   saveProgress();
+
+  setFeedback(`Bra! +${XP_PER_REVEAL} XP och +${GEMS_PER_REVEAL} gems.`, "good");
+  el.nextBtn.disabled = false;
 }
 
 function finishUnit() {
   stopTimer();
   setFeedback(`Unit klar på ${formatTime(state.timerSeconds)}!`, "good");
-  el.prompt.textContent = "Bra jobbat! Du klarade Unit 1.";
   el.hint.textContent = "Tryck Avsluta Unit för att gå tillbaka till startsidan.";
-  el.choices.innerHTML = "";
   el.nextBtn.disabled = true;
+  el.armenianWordBtn.disabled = true;
 }
 
-function nextQuestion() {
-  if (!state.answered) {
+function nextCard() {
+  if (!state.revealed) {
     return;
   }
 
-  if (state.unitIndex >= lessons.length - 1) {
+  if (state.unitIndex >= lessonCards.length - 1) {
     finishUnit();
     return;
   }
 
   state.unitIndex += 1;
-  renderQuestion();
+  renderCard();
 }
 
 async function animateEntryAndEnterUnit() {
@@ -268,13 +230,13 @@ async function enterUnit() {
   state.unitIndex = 0;
   showPage("unit");
   startTimer();
-  renderQuestion();
+  el.armenianWordBtn.disabled = false;
+  renderCard();
 }
 
 function quitUnit() {
   stopTimer();
   showPage("home");
-  setFeedback("", "info");
 }
 
 function resetProgress() {
@@ -288,12 +250,12 @@ function resetProgress() {
 el.themeToggle.addEventListener("click", toggleTheme);
 el.enterUnitBtn.addEventListener("click", enterUnit);
 el.quitUnitBtn.addEventListener("click", quitUnit);
-el.nextBtn.addEventListener("click", nextQuestion);
+el.armenianWordBtn.addEventListener("click", revealMeaning);
+el.nextBtn.addEventListener("click", nextCard);
 el.resetProgressBtn.addEventListener("click", resetProgress);
 
 loadTheme();
 loadProgress();
 updateTopStats();
-renderUnitWords();
-renderPhraseList();
+renderQuickWords();
 showPage("home");
