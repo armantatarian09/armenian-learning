@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="sv" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Armeniska Duo • Svenska till Armeniska</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="app-shell">
+    <section id="homePage" class="page active" aria-label="Hem">
+      <header class="topbar">
+        <h1>Armeniska Duo</h1>
+        <button id="themeToggle" class="ghost-btn" type="button">Mörkt läge</button>
+      </header>
+
+      <article class="card course-card">
+        <p class="eyebrow">Svenska → Armeniska</p>
+        <h2>Unit 1</h2>
+        <p>Block-baserad översättning med ordkort.</p>
+        <div class="meta-row">
+          <span>Streak: <strong id="streak">1</strong></span>
+          <span>XP: <strong id="xp">0</strong></span>
+          <span>Gems: <strong id="gems">0</strong></span>
+        </div>
+        <button id="enterUnitBtn" class="primary-btn" type="button">Starta Unit 1</button>
+      </article>
+
+      <article class="card">
+        <h3>Tryckbara ord</h3>
+        <p class="muted">Nya ord är rosa, vanliga är svarta. Alla har prickad underline.</p>
+        <div id="unitWords" class="unit-words"></div>
+      </article>
+    </section>
+
+    <section id="unitPage" class="page" aria-label="Unit 1">
+      <header class="topbar unit-topbar">
+        <button id="quitUnitBtn" class="ghost-btn" type="button">Avsluta Unit</button>
+        <div class="unit-status">
+          <span id="questionCounter">1 / 10</span>
+          <span id="timerText">00:00</span>
+        </div>
+      </header>
+
+      <article class="card question-card">
+        <p class="translate-label">Översätt</p>
+
+        <div class="speech-row">
+          <div class="avatar" aria-hidden="true">🧑</div>
+          <div class="speech-bubble">
+            <p id="armenianWordText" class="armenian-word">Բարև</p>
+            <button id="showMeaningBtn" class="meaning-trigger" type="button">Visa betydelse</button>
+            <p id="wordMeaning" class="word-meaning" hidden>hej</p>
+          </div>
+        </div>
+
+        <div class="answer-area">
+          <p class="area-label">Din översättning</p>
+          <div id="answerBar" class="answer-bar" aria-live="polite"></div>
+          <div class="bar-actions">
+            <button id="clearBtn" class="ghost-btn" type="button">Rensa</button>
+            <button id="checkBtn" class="primary-btn" type="button" disabled>Kolla</button>
+          </div>
+        </div>
+
+        <div>
+          <p class="area-label">Ord-block</p>
+          <div id="wordBank" class="word-bank"></div>
+        </div>
+
+        <p id="feedback" class="feedback" aria-live="polite"></p>
+        <button id="nextBtn" class="primary-btn" type="button" disabled>Nästa</button>
+      </article>
+    </section>
+  </main>
+
+  <div id="entryOverlay" class="overlay" hidden>
+    <div class="overlay-card">
+      <p>Öppnar Unit 1…</p>
+      <div class="load-track"><div id="loadFill" class="load-fill"></div></div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
