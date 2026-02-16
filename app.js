@@ -11,6 +11,19 @@ const lessons = [
   { id: 10, sv: "Jag mår bra", hy: "Ես լավ եմ", pronunciation: "Es lav em", hint: "Svar på hur-frågan.", choices: ["Ես լավ եմ", "Ներեցեք", "Բարև", "Շնորհակալություն"] },
 ];
 
+const unitWordPairs = [
+  { sv: "hej", hy: "բարև" },
+  { sv: "tack", hy: "շնորհակալություն" },
+  { sv: "ja", hy: "այո" },
+  { sv: "nej", hy: "ոչ" },
+  { sv: "snälla", hy: "խնդրում եմ" },
+  { sv: "ursäkta", hy: "ներեցեք" },
+  { sv: "god morgon", hy: "բարի լույս" },
+  { sv: "god natt", hy: "բարի գիշեր" },
+  { sv: "hur mår du", hy: "ինչպե՞ս ես" },
+  { sv: "jag mår bra", hy: "ես լավ եմ" },
+];
+
 const DAILY_XP_GOAL = 90;
 const XP_PER_CORRECT = 12;
 const XP_COMBO_BONUS = 8;
@@ -21,6 +34,7 @@ const THEME_KEY = "armenian-duo-theme";
 const el = {
   root: document.documentElement,
   themeToggle: document.getElementById("themeToggle"),
+  unitWords: document.getElementById("unitWords"),
   pathNodes: document.getElementById("pathNodes"),
   streak: document.getElementById("streak"),
   xp: document.getElementById("xp"),
@@ -105,6 +119,20 @@ function loadTheme() {
 function toggleTheme() {
   const current = el.root.getAttribute("data-theme") || "light";
   applyTheme(current === "light" ? "dark" : "light");
+}
+
+function renderUnitWords() {
+  el.unitWords.innerHTML = "";
+
+  unitWordPairs.forEach((pair) => {
+    const chip = document.createElement("button");
+    chip.type = "button";
+    chip.className = "word-chip";
+    chip.textContent = pair.sv;
+    chip.setAttribute("data-translation", `${pair.hy}`);
+    chip.setAttribute("aria-label", `${pair.sv} betyder ${pair.hy}`);
+    el.unitWords.appendChild(chip);
+  });
 }
 
 function fillPhraseList() {
@@ -331,6 +359,7 @@ el.themeToggle.addEventListener("click", toggleTheme);
 
 loadTheme();
 loadProgress();
+renderUnitWords();
 fillPhraseList();
 updateStats();
 buildPath();

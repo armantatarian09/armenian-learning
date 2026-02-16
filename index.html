@@ -18,7 +18,7 @@
     </aside>
 
     <main class="main-column">
-      <header class="course-top">
+      <header class="course-top glass">
         <div class="course-pill">Svenska → Armeniska • Textbaserat</div>
         <div class="top-right">
           <button id="themeToggle" class="theme-btn" type="button" aria-label="Växla tema">Mörkt läge</button>
@@ -30,12 +30,18 @@
         </div>
       </header>
 
-      <section class="unit-banner">
+      <section class="unit-banner card-elevated">
         <div>
           <h2>Unit 1</h2>
           <p>Bygg enkla meningar och vanliga hälsningar.</p>
         </div>
         <button id="resetProgressBtn" class="guidebook" type="button">Återställ</button>
+      </section>
+
+      <section class="unit-vocab card-elevated" aria-label="Ordförråd i enheten">
+        <h3>Hover-ord i enheten</h3>
+        <p>Hovra över ett svenskt ord för att se armenisk översättning.</p>
+        <div id="unitWords" class="unit-words"></div>
       </section>
 
       <section class="path-wrap">
@@ -44,14 +50,14 @@
     </main>
 
     <aside class="right-column">
-      <section class="panel">
+      <section class="panel card-elevated">
         <h3>Daily Quest</h3>
         <p>Tjäna 90 XP idag</p>
         <div class="bar"><div id="questFill" class="bar-fill"></div></div>
         <small id="questText">0 / 90 XP</small>
       </section>
 
-      <section class="panel">
+      <section class="panel card-elevated">
         <h3>Kursprogress</h3>
         <div class="xp-row">
           <span>Avklarade noder</span>
@@ -61,7 +67,7 @@
         <small id="masteryText">Mastery: 0%</small>
       </section>
 
-      <section class="panel lesson-panel">
+      <section class="panel lesson-panel card-elevated">
         <div class="lesson-header">
           <h3 id="lessonTitle">Starta en lektion</h3>
           <span id="lessonTag" class="tag">Välj nod</span>
@@ -76,7 +82,7 @@
         <p id="feedback" class="feedback" aria-live="polite"></p>
       </section>
 
-      <section class="panel">
+      <section class="panel card-elevated">
         <h3>Frasbank</h3>
         <ul id="phraseList" class="phrase-list"></ul>
       </section>
