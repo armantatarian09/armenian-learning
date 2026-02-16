@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "vitest run"
+    "test": "vitest run",
+    "test:smoke": "playwright test"
   },
   "dependencies": {
     "framer-motion": "^12.4.2",
@@ -28,6 +29,7 @@
     "eslint-config-next": "14.2.8",
     "jsdom": "^26.0.0",
     "typescript": "^5.7.3",
-    "vitest": "^3.0.5"
+    "vitest": "^3.0.5",
+    "@playwright/test": "^1.51.0"
   }
 }

@@ -1,0 +1,138 @@
+{
+  "id": "unit-1-lesson-1",
+  "unitId": "unit-1",
+  "title": "Alphabet & Greetings",
+  "tip": "Armenian has its own alphabet. Start with greetings and letters: բ (b), ա (a), ր (r), և polite phrases like բարև.",
+  "exercises": [
+    {
+      "id": "u1l1-e1",
+      "type": "multiple-choice",
+      "prompt": "Choose the translation: բարև",
+      "acceptedAnswers": ["hello"],
+      "hints": ["Used as a greeting"],
+      "transliteration": "barev",
+      "tags": ["greeting"],
+      "skill": "greetings",
+      "difficulty": 1,
+      "options": ["thank you", "hello", "please", "goodbye"]
+    },
+    {
+      "id": "u1l1-e2",
+      "type": "word-tiles",
+      "prompt": "Build: I say hello",
+      "acceptedAnswers": ["ես ասում եմ բարև"],
+      "hints": ["Start with ես"],
+      "transliteration": "yes asum em barev",
+      "tags": ["sentence"],
+      "skill": "syntax",
+      "difficulty": 2,
+      "tiles": ["ասում", "ես", "բարև", "եմ"]
+    },
+    {
+      "id": "u1l1-e3",
+      "type": "dictation",
+      "prompt": "Listen and type the Armenian word",
+      "acceptedAnswers": ["շնորհակալություն"],
+      "hints": ["Means thank you"],
+      "transliteration": "shnorhakalutyun",
+      "audioRef": "audio-thank-you",
+      "tags": ["greeting"],
+      "skill": "listening",
+      "difficulty": 2
+    },
+    {
+      "id": "u1l1-e4",
+      "type": "matching",
+      "prompt": "Match Armenian and English",
+      "acceptedAnswers": ["բարև:hello", "խնդրեմ:please", "շնորհակալություն:thank you"],
+      "hints": ["These are polite basics"],
+      "tags": ["vocab"],
+      "skill": "matching",
+      "difficulty": 1,
+      "pairs": [
+        { "left": "բարև", "right": "hello" },
+        { "left": "խնդրեմ", "right": "please" },
+        { "left": "շնորհակալություն", "right": "thank you" }
+      ]
+    },
+    {
+      "id": "u1l1-e5",
+      "type": "alphabet",
+      "prompt": "Which letter sounds like 'b'?",
+      "acceptedAnswers": ["բ"],
+      "hints": ["First letter in բարև"],
+      "transliteration": "b",
+      "tags": ["alphabet"],
+      "skill": "letters",
+      "difficulty": 1,
+      "options": ["ա", "բ", "ր", "ե"],
+      "letter": "բ",
+      "sound": "b"
+    },
+    {
+      "id": "u1l1-e6",
+      "type": "multiple-choice",
+      "prompt": "Choose the translation: խնդրեմ",
+      "acceptedAnswers": ["please"],
+      "hints": ["Polite word"],
+      "transliteration": "khndrem",
+      "tags": ["greeting"],
+      "skill": "greetings",
+      "difficulty": 1,
+      "options": ["please", "sorry", "yes", "no"]
+    },
+    {
+      "id": "u1l1-e7",
+      "type": "word-tiles",
+      "prompt": "Build: thank you",
+      "acceptedAnswers": ["շնորհակալություն"],
+      "hints": ["One Armenian word"],
+      "transliteration": "shnorhakalutyun",
+      "tags": ["vocab"],
+      "skill": "syntax",
+      "difficulty": 1,
+      "tiles": ["շնորհակալություն"]
+    },
+    {
+      "id": "u1l1-e8",
+      "type": "dictation",
+      "prompt": "Listen and type the Armenian greeting",
+      "acceptedAnswers": ["բարև"],
+      "hints": ["Hello"],
+      "transliteration": "barev",
+      "audioRef": "audio-hello",
+      "tags": ["listening"],
+      "skill": "listening",
+      "difficulty": 1
+    },
+    {
+      "id": "u1l1-e9",
+      "type": "matching",
+      "prompt": "Match letters and names",
+      "acceptedAnswers": ["ա:a", "բ:b", "ր:r"],
+      "hints": ["Alphabet basics"],
+      "tags": ["alphabet"],
+      "skill": "letters",
+      "difficulty": 1,
+      "pairs": [
+        { "left": "ա", "right": "a" },
+        { "left": "բ", "right": "b" },
+        { "left": "ր", "right": "r" }
+      ]
+    },
+    {
+      "id": "u1l1-e10",
+      "type": "alphabet",
+      "prompt": "Tap the Armenian letter for 'a'",
+      "acceptedAnswers": ["ա"],
+      "hints": ["First Armenian vowel"],
+      "transliteration": "a",
+      "tags": ["alphabet"],
+      "skill": "letters",
+      "difficulty": 1,
+      "options": ["բ", "ր", "ա", "ե"],
+      "letter": "ա",
+      "sound": "a"
+    }
+  ]
+}

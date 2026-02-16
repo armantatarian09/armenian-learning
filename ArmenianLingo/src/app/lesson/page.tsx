@@ -1,8 +1,11 @@
-export default function LessonPage() {
+import Link from "next/link";
+
+export default function LessonIndexPage() {
   return (
     <section className="page-card">
       <h1 className="page-header">Lesson</h1>
-      <div className="placeholder">Exercise player scaffold with desktop-first two-column layout placeholder.</div>
+      <p>Open an available lesson from Learn.</p>
+      <Link className="primary-btn" href="/learn">Go to Learn</Link>
     </section>
   );
 }
